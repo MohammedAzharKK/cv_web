@@ -57,46 +57,99 @@ class _PortfolioAppState extends State<PortfolioApp> {
   }
 }
 
-class PortfolioHomePage extends StatelessWidget {
+class PortfolioHomePage extends StatefulWidget {
   final VoidCallback onToggleTheme;
   final ThemeMode themeMode;
   const PortfolioHomePage(
       {super.key, required this.onToggleTheme, required this.themeMode});
   @override
+  State<PortfolioHomePage> createState() => _PortfolioHomePageState();
+}
+
+class _PortfolioHomePageState extends State<PortfolioHomePage> {
+  final aboutKey = GlobalKey();
+  final projectsKey = GlobalKey();
+  final skillsKey = GlobalKey();
+  final experienceKey = GlobalKey();
+  final contactKey = GlobalKey();
+  final scrollController = ScrollController();
+
+  void scrollTo(GlobalKey key) {
+    final ctx = key.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(ctx,
+          duration: const Duration(milliseconds: 700), curve: Curves.easeInOut);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(70),
+        child: GlassNavBar(
+          themeMode: widget.themeMode,
+          onToggleTheme: widget.onToggleTheme,
+          onNav: (section) {
+            switch (section) {
+              case 'About':
+                scrollTo(aboutKey);
+                break;
+              case 'Projects':
+                scrollTo(projectsKey);
+                break;
+              case 'Skills':
+                scrollTo(skillsKey);
+                break;
+              case 'Experience':
+                scrollTo(experienceKey);
+                break;
+              case 'Contact':
+                scrollTo(contactKey);
+                break;
+            }
+          },
+        ),
+      ),
       body: SingleChildScrollView(
+        controller: scrollController,
         child: Column(
           children: [
             HeroSection(
-              onToggleTheme: onToggleTheme,
-              themeMode: themeMode,
+              onToggleTheme: widget.onToggleTheme,
+              themeMode: widget.themeMode,
             ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0),
             const SizedBox(height: 48),
-            const Section(
+            Section(
+              key: aboutKey,
               title: 'About',
               delay: 200,
-              child: AboutSection(),
+              child: const AboutSection(),
             ),
-            const Section(
+            Section(
+              key: projectsKey,
               title: 'Projects',
               delay: 400,
-              child: ProjectsSection(),
+              child: const ProjectsSection(),
             ),
-            const Section(
+            Section(
+              key: skillsKey,
               title: 'Skills',
               delay: 600,
-              child: SkillsSection(),
+              child: const SkillsSection(),
             ),
-            const Section(
+            Section(
+              key: experienceKey,
               title: 'Experience',
               delay: 800,
-              child: ExperienceSection(),
+              child: const ExperienceSection(),
             ),
-            const Section(
+            Section(
+              key: contactKey,
               title: 'Contact',
               delay: 1000,
-              child: ContactSection(),
+              child: const ContactSection(),
             ),
             const SizedBox(height: 32),
             const Footer(),
@@ -1332,7 +1385,7 @@ class _AnimatedContactIconState extends State<AnimatedContactIcon> {
           child: Icon(widget.icon,
               color: _hovered ? widget.color : Colors.blueGrey.shade400,
               size: 28),
-        ).animate().scale(duration: 350.ms, curve: Curves.easeOutBack),
+        ),
       ),
     );
   }
@@ -1418,6 +1471,238 @@ class _AnimatedGradientBarState extends State<AnimatedGradientBar>
           ),
         );
       },
+    );
+  }
+}
+
+class GlassNavBar extends StatefulWidget {
+  final ThemeMode themeMode;
+  final VoidCallback onToggleTheme;
+  final void Function(String section) onNav;
+  const GlassNavBar(
+      {super.key,
+      required this.themeMode,
+      required this.onToggleTheme,
+      required this.onNav});
+  @override
+  State<GlassNavBar> createState() => _GlassNavBarState();
+}
+
+class _GlassNavBarState extends State<GlassNavBar> {
+  bool _menuOpen = false;
+  void _toggleMenu() => setState(() => _menuOpen = !_menuOpen);
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isMobile = MediaQuery.of(context).size.width < 700;
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 10 : 32, vertical: isMobile ? 4 : 10),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.blueGrey.shade900.withOpacity(0.7)
+                    : Colors.white.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark
+                        ? Colors.blue.shade900.withOpacity(0.10)
+                        : Colors.blue.shade100.withOpacity(0.10),
+                    blurRadius: 24,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+                border: Border.all(
+                  color: isDark ? Colors.cyan.shade200 : Colors.blue.shade200,
+                  width: 1.5,
+                ),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: isMobile ? 8 : 0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 18),
+                              child: Text(
+                                'AZHAR',
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 22,
+                                  color: isDark
+                                      ? Colors.cyan.shade200
+                                      : Colors.blue.shade700,
+                                  letterSpacing: 2.5,
+                                ),
+                              ),
+                            ),
+                            if (!isMobile) ...[
+                              NavLink(
+                                  label: 'About',
+                                  onTap: () => widget.onNav('About')),
+                              NavLink(
+                                  label: 'Projects',
+                                  onTap: () => widget.onNav('Projects')),
+                              NavLink(
+                                  label: 'Skills',
+                                  onTap: () => widget.onNav('Skills')),
+                              NavLink(
+                                  label: 'Experience',
+                                  onTap: () => widget.onNav('Experience')),
+                              NavLink(
+                                  label: 'Contact',
+                                  onTap: () => widget.onNav('Contact')),
+                            ]
+                          ],
+                        ),
+                        if (!isMobile)
+                          ThemeToggleButton(
+                            isDark: isDark,
+                            onToggle: widget.onToggleTheme,
+                          ),
+                        if (isMobile)
+                          IconButton(
+                            icon: Icon(_menuOpen ? Icons.close : Icons.menu,
+                                size: 28,
+                                color: isDark
+                                    ? Colors.cyan.shade200
+                                    : Colors.blue.shade700),
+                            onPressed: _toggleMenu,
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            if (_menuOpen && isMobile)
+              Positioned(
+                top: 60,
+                left: 0,
+                right: 0,
+                child: GlassMenuOverlay(
+                  onNav: (section) {
+                    _toggleMenu();
+                    widget.onNav(section);
+                  },
+                  onToggleTheme: widget.onToggleTheme,
+                  isDark: isDark,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class GlassMenuOverlay extends StatelessWidget {
+  final void Function(String section) onNav;
+  final VoidCallback onToggleTheme;
+  final bool isDark;
+  const GlassMenuOverlay(
+      {super.key,
+      required this.onNav,
+      required this.onToggleTheme,
+      required this.isDark});
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 18),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.blueGrey.shade900.withOpacity(0.92)
+              : Colors.white.withOpacity(0.92),
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: isDark
+                  ? Colors.blue.shade900.withOpacity(0.13)
+                  : Colors.blue.shade100.withOpacity(0.13),
+              blurRadius: 32,
+              offset: const Offset(0, 8),
+            ),
+          ],
+          border: Border.all(
+            color: isDark ? Colors.cyan.shade200 : Colors.blue.shade200,
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            NavLink(label: 'About', onTap: () => onNav('About')),
+            NavLink(label: 'Projects', onTap: () => onNav('Projects')),
+            NavLink(label: 'Skills', onTap: () => onNav('Skills')),
+            NavLink(label: 'Experience', onTap: () => onNav('Experience')),
+            NavLink(label: 'Contact', onTap: () => onNav('Contact')),
+            const SizedBox(height: 16),
+            ThemeToggleButton(isDark: isDark, onToggle: onToggleTheme),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NavLink extends StatefulWidget {
+  final String label;
+  final VoidCallback onTap;
+  const NavLink({super.key, required this.label, required this.onTap});
+  @override
+  State<NavLink> createState() => _NavLinkState();
+}
+
+class _NavLinkState extends State<NavLink> {
+  bool _hovered = false;
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: 200.ms,
+          margin: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: _hovered
+                ? (isDark
+                    ? Colors.cyan.shade900.withOpacity(0.13)
+                    : Colors.blue.shade50.withOpacity(0.7))
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Text(
+            widget.label,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 15,
+              color: _hovered
+                  ? (isDark ? Colors.cyan.shade200 : Colors.blue.shade700)
+                  : (isDark ? Colors.cyan.shade100 : Colors.blueGrey.shade700),
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
