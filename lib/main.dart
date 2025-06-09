@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -129,19 +131,19 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
             ),
             Section(
               key: projectsKey,
-              title: 'Projects',
+              title: '',
               delay: 400,
               child: const ProjectsSection(),
             ),
             Section(
               key: skillsKey,
-              title: 'Skills',
+              title: '',
               delay: 600,
               child: const SkillsSection(),
             ),
             Section(
               key: experienceKey,
-              title: 'Experience',
+              title: '',
               delay: 800,
               child: const ExperienceSection(),
             ),
@@ -194,15 +196,7 @@ class HeroSection extends StatelessWidget {
             ],
           ),
         ),
-        // Theme toggle button (top right)
-        Positioned(
-          top: 32,
-          right: 32,
-          child: ThemeToggleButton(
-            isDark: isDark,
-            onToggle: onToggleTheme,
-          ),
-        ),
+
         // Glassmorphism card with glowing border
         Center(
           child: Container(
@@ -685,7 +679,11 @@ class AboutSection extends StatelessWidget {
     return Text(
       'Aspiring Flutter Full-Stack Developer with a passion for building beautiful, scalable, and robust cross-platform apps. I focus on seamless user experiences, direct API integration, and minimal, maintainable code. Let\'s build something amazing together!',
       style: GoogleFonts.poppins(
-          fontSize: 18, color: Colors.blueGrey.shade700, height: 1.6),
+        fontSize: 18,
+        color: Theme.of(context).colorScheme.onBackground,
+        height: 1.6,
+      ),
+      textAlign: TextAlign.center,
     );
   }
 }
@@ -819,7 +817,6 @@ class _ProjectCardState extends State<ProjectCard> {
           width: 300,
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: Colors.white,
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
@@ -1095,14 +1092,7 @@ class ExperienceSection extends StatelessWidget {
         ],
       ),
     ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const AnimatedSectionHeader(title: 'Experience'),
-        const SizedBox(height: 32),
-        Timeline(jobs: jobs),
-      ],
-    );
+    return Timeline(jobs: jobs);
   }
 }
 
@@ -1172,7 +1162,7 @@ class ExperienceCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 40),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        // color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -1190,7 +1180,7 @@ class ExperienceCard extends StatelessWidget {
               style: GoogleFonts.poppins(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey.shade900)),
+                  color: Colors.white)),
           const SizedBox(height: 4),
           Text(data.company,
               style: GoogleFonts.poppins(
@@ -1227,80 +1217,77 @@ class ContactSection extends StatelessWidget {
   const ContactSection({super.key});
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const AnimatedSectionHeader(title: 'Contact'),
-        const SizedBox(height: 32),
-        Center(
-          child: GlassCard(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+    return Center(
+      child: GlassCard(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Let\'s connect!',
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'I\'m open to new opportunities, collaborations, and interesting projects. Feel free to reach out!',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 24,
                 children: [
-                  Text(
-                    'Let\'s connect!',
-                    style: GoogleFonts.poppins(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueGrey.shade900),
+                  AnimatedContactIcon(
+                    icon: FontAwesomeIcons.linkedin,
+                    url: 'https://linkedin.com/in/your-link',
+                    tooltip: 'LinkedIn',
+                    color: Colors.blue.shade700,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'I\'m open to new opportunities, collaborations, and interesting projects. Feel free to reach out!',
-                    style: GoogleFonts.poppins(
-                        fontSize: 16, color: Colors.blueGrey.shade700),
-                    textAlign: TextAlign.center,
+                  AnimatedContactIcon(
+                    icon: FontAwesomeIcons.github,
+                    url: 'https://github.com/your-github',
+                    tooltip: 'GitHub',
+                    color: Colors.blueGrey.shade900,
                   ),
-                  const SizedBox(height: 24),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 24,
-                    children: [
-                      AnimatedContactIcon(
-                        icon: FontAwesomeIcons.linkedin,
-                        url: 'https://linkedin.com/in/your-link',
-                        tooltip: 'LinkedIn',
-                        color: Colors.blue.shade700,
-                      ),
-                      AnimatedContactIcon(
-                        icon: FontAwesomeIcons.github,
-                        url: 'https://github.com/your-github',
-                        tooltip: 'GitHub',
-                        color: Colors.blueGrey.shade900,
-                      ),
-                      AnimatedContactIcon(
-                        icon: Icons.email,
-                        url: 'mailto:azramn007@gmail.com',
-                        tooltip: 'Email',
-                        color: Colors.red.shade400,
-                      ),
-                      AnimatedContactIcon(
-                        icon: Icons.phone,
-                        url: 'tel:+918301816993',
-                        tooltip: 'Call',
-                        color: Colors.green.shade400,
-                      ),
-                    ],
+                  AnimatedContactIcon(
+                    icon: Icons.email,
+                    url: 'mailto:azramn007@gmail.com',
+                    tooltip: 'Email',
+                    color: Colors.red.shade400,
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'azramn007@gmail.com',
-                    style: GoogleFonts.poppins(
-                        fontSize: 15, color: Colors.blueGrey.shade500),
-                  ),
-                  Text(
-                    '+91 8301816993',
-                    style: GoogleFonts.poppins(
-                        fontSize: 15, color: Colors.blueGrey.shade500),
+                  AnimatedContactIcon(
+                    icon: Icons.phone,
+                    url: 'tel:+918301816993',
+                    tooltip: 'Call',
+                    color: Colors.green.shade400,
                   ),
                 ],
               ),
-            ),
-          ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.1, end: 0),
+              const SizedBox(height: 24),
+              Text(
+                'azramn007@gmail.com',
+                style: GoogleFonts.poppins(
+                    fontSize: 15, color: Colors.blueGrey.shade500),
+              ),
+              Text(
+                '+91 8301816993',
+                style: GoogleFonts.poppins(
+                    fontSize: 15, color: Colors.blueGrey.shade500),
+              ),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -1479,6 +1466,7 @@ class GlassNavBar extends StatefulWidget {
   final ThemeMode themeMode;
   final VoidCallback onToggleTheme;
   final void Function(String section) onNav;
+
   const GlassNavBar(
       {super.key,
       required this.themeMode,
@@ -1491,6 +1479,8 @@ class GlassNavBar extends StatefulWidget {
 class _GlassNavBarState extends State<GlassNavBar> {
   bool _menuOpen = false;
   void _toggleMenu() => setState(() => _menuOpen = !_menuOpen);
+
+  void _closeMenu() => setState(() => _menuOpen = false);
 
   @override
   Widget build(BuildContext context) {
@@ -1588,17 +1578,31 @@ class _GlassNavBarState extends State<GlassNavBar> {
               ),
             ),
             if (_menuOpen && isMobile)
-              Positioned(
-                top: 60,
-                left: 0,
-                right: 0,
-                child: GlassMenuOverlay(
-                  onNav: (section) {
-                    _toggleMenu();
-                    widget.onNav(section);
-                  },
-                  onToggleTheme: widget.onToggleTheme,
-                  isDark: isDark,
+              Positioned.fill(
+                child: Stack(
+                  children: [
+                    // Semi-transparent backdrop
+                    GestureDetector(
+                      onTap: _closeMenu,
+                      child: Container(
+                        color: isDark
+                            ? Colors.black.withOpacity(0.45)
+                            : Colors.white.withOpacity(0.25),
+                      ),
+                    ),
+                    // Glassy menu overlay
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: GlassMenuOverlay(
+                        onNav: (section) {
+                          _closeMenu();
+                          widget.onNav(section);
+                        },
+                        onToggleTheme: widget.onToggleTheme,
+                        isDark: isDark,
+                      ),
+                    ),
+                  ],
                 ),
               ),
           ],
