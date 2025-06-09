@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "web": "cv-web-d2fbe"
+  },
+  "targets": {
+    "cv-web-d2fbe": {
+      "hosting": {
+        "web": [
+          "cv-web-d2fbe"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
